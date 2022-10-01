@@ -1,10 +1,12 @@
 // src/server/router/index.ts
 
-import { protectedExampleRouter } from './protected-router';
+import { SessionRouter } from './session';
 import { t } from './t';
+import { VerificationRouter } from './verificaiton';
 
 export const appRouter = t.router({
-    auth: protectedExampleRouter,
+    session: SessionRouter,
+    verification: VerificationRouter,
 });
 
 // export type definition of API

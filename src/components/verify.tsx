@@ -1,14 +1,18 @@
+import { useCurrentVerification } from '../atoms/verifcation';
+
 const Picture = () => {
     const url = '/img1.png';
 
     return (
-        <picture className=" w-full lg:w-max ">
+        <picture className="w-full lg:my-auto lg:w-max">
             <img src={url} alt="the verication image" />
         </picture>
     );
 };
 
 const SideBar = () => {
+    const currentVerification = useCurrentVerification();
+    console.log(currentVerification);
     return (
         <div className="mr-auto flex w-full flex-col lg:ml-6 lg:w-[30vw] ">
             <h1 className="text-2xl">Metadata</h1>
@@ -41,6 +45,9 @@ const SideBar = () => {
                     Accept
                 </button>
             </div>
+            {currentVerification && (
+                <pre>{JSON.stringify(currentVerification, null, 2)}</pre>
+            )}
         </div>
     );
 };
