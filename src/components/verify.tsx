@@ -10,25 +10,25 @@ const Picture = () => {
 
 const SideBar = () => {
     return (
-        <div className="ml-6 mr-auto flex w-full flex-col lg:w-56 ">
-            <h1 className="text-2xl ">Metadata</h1>
-            <table className="w-full">
+        <div className="mr-auto flex w-full flex-col lg:ml-6 lg:w-[30vw] ">
+            <h1 className="text-2xl">Metadata</h1>
+            <table className="mx-auto w-9/12 lg:w-full">
                 <tbody>
                     <tr>
                         <td className="font-bold">Type</td>
-                        <td>SUV</td>
+                        <td className="w-min">SUV</td>
                     </tr>
                     <tr>
                         <td className="font-bold">Direction</td>
-                        <td>Out</td>
+                        <td className="w-min">Out</td>
                     </tr>
                     <tr>
                         <td className="font-bold">Colour</td>
-                        <td>red</td>
+                        <td className="w-min">red</td>
                     </tr>
                     <tr>
                         <td className="font-bold">Location</td>
-                        <td>UK</td>
+                        <td className="w-min">UK</td>
                     </tr>
                 </tbody>
             </table>

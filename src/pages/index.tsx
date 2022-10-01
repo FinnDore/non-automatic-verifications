@@ -1,19 +1,28 @@
 import type { NextPage } from 'next';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { Verify } from '../components/verify';
 
-const Nav = () => (
-    <div className="flex w-full mb-6">
-        <div className="mr-auto text-xl font-bold">NAV</div>
-        <button className="" onClick={() => signIn('keycloak')}>
-            Login
-        </button>
-    </div>
-);
+const Nav = () => {
+    const { data } = useSession();
+
+    return (
+        <div className="mb-6 flex w-full">
+            <div className="mr-auto text-xl font-bold">NAV</div>
+            {!data?.user && (
+                <button className="" onClick={() => signIn('keycloak')}>
+                    Login
+                </button>
+            )}
+            {data?.user && (
+                <div className="text-rose-600">{data.user.name}</div>
+            )}
+        </div>
+    );
+};
 
 const Home: NextPage = () => {
     return (
-        <div className="w-screen h-screen dark:bg-black bg-white dark:text-white px-6 py-4">
+        <div className="h-screen w-screen bg-white px-6 py-4 dark:bg-black dark:text-white">
             <Nav />
             <Verify />
         </div>
