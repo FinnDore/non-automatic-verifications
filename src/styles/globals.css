@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+    outline: none;
+}
+
+::selection {
+    background-color: rgb(91 33 182);
+    color: white;
+}
+
+.toast {
+    margin: 0 auto !important;
+    max-width: 100vw !important;
+    opacity: 1 !important;
+}
+
+.noise {
+    background-repeat: repeat;
+    pointer-events: none;
+    background-image: url(/NOISE.webp);
+    background-position: 0px 0px;
+    background-size: 175px;
+    opacity: 0.08;
+    left: 0%;
+    top: 0%;
+    width: 100%;
+    height: 100%;
+}

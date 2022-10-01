@@ -44,8 +44,6 @@ const apdater: Adapter = {
                 scope,
                 session_state,
                 token_type,
-
-                // ... anything else you actually want to store
             },
         });
     },
