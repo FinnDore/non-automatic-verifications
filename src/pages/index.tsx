@@ -1,25 +1,21 @@
 import type { NextPage } from 'next';
 import { signIn } from 'next-auth/react';
-import { trpc } from '../utils/trpc';
+import { Verify } from '../components/verify';
+
+const Nav = () => (
+    <div className="flex w-full mb-6">
+        <div className="mr-auto text-xl font-bold">NAV</div>
+        <button className="" onClick={() => signIn('keycloak')}>
+            Login
+        </button>
+    </div>
+);
+
 const Home: NextPage = () => {
-    const { data: data, refetch } = trpc.auth.getSession.useQuery(
-        { name: 'a' },
-        {
-            refetchOnWindowFocus: false,
-            enabled: false,
-        }
-    );
-
     return (
-        <div className="w-screen h-screen flex bg-black text-white">
-            <button className="m-auto" onClick={() => signIn()}>
-                Login
-            </button>
-            <button className="m-auto" onClick={() => refetch()}>
-                Fetch
-            </button>
-
-            <pre>{JSON.stringify(data ?? 'null', null, 4)}</pre>
+        <div className="w-screen h-screen dark:bg-black bg-white dark:text-white px-6 py-4">
+            <Nav />
+            <Verify />
         </div>
     );
     // return <pre>{JSON.stringify(data, null, 2)}</pre>;
