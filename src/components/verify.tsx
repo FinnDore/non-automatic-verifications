@@ -1,4 +1,4 @@
-import { useCurrentVerification } from '../atoms/verifcation';
+import { useCurrentVerification, useSession } from '../atoms/verifcation';
 
 const Picture = () => {
     const url = '/img1.png';
@@ -12,7 +12,9 @@ const Picture = () => {
 
 const SideBar = () => {
     const currentVerification = useCurrentVerification();
+    const { session } = useSession();
     console.log(currentVerification);
+
     return (
         <div className="mr-auto flex w-full flex-col lg:ml-6 lg:w-[30vw] ">
             <h1 className="text-2xl">Metadata</h1>
@@ -45,9 +47,10 @@ const SideBar = () => {
                     Accept
                 </button>
             </div>
-            {currentVerification && (
+            {/* {currentVerification && (
                 <pre>{JSON.stringify(currentVerification, null, 2)}</pre>
-            )}
+            )} */}
+            {session?.verifications?.length} in the current session
         </div>
     );
 };

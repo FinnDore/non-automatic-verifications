@@ -17,6 +17,7 @@
         "@trpc/react": "^10.0.0-proxy-beta.10",
         "@trpc/server": "^10.0.0-proxy-beta.10",
         "clsx": "^1.2.1",
+        "date-fns": "^2.29.3",
         "jotai": "^1.8.4",
         "lodash-es": "^4.17.21",
         "next": "12.3.1",

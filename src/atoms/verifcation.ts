@@ -1,5 +1,7 @@
 import { Verificaiton } from '@prisma/client';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { popToast, ToastLevel } from '../cocaine/toast';
+import { trpc } from '../utils/trpc';
 
 export const sessionAtom = atom<{
     sessionId: string;
@@ -24,4 +26,34 @@ export const useCurrentVerification = () => {
         session?.verifications.find((v) => v.id === currentVerificationId) ??
         null
     );
+};
+
+export const useStartSessionById = (sessionId: string) => {
+    const [, setSession] = useAtom(sessionAtom);
+    const setCurrentVerificationId = useSetCurrentVerificationId();
+    const { refetch, isLoading } = trpc.session.getSession.useQuery(
+        {
+            sessionId,
+        },
+        {
+            enabled: false,
+            refetchOnWindowFocus: false,
+            onError(err) {
+                console.log(err);
+                popToast({
+                    body: 'Failed to start session',
+                    level: ToastLevel.ERROR,
+                });
+            },
+            onSuccess(session) {
+                setSession(() => session);
+                setCurrentVerificationId(session.verifications[0]?.id ?? null);
+            },
+        }
+    );
+
+    return {
+        startSession: refetch,
+        isLoading,
+    };
 };

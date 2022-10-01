@@ -1,6 +1,11 @@
+import { formatDistance } from 'date-fns';
 import { useAtom } from 'jotai';
 import { useState } from 'react';
-import { sessionAtom, useSetCurrentVerificationId } from '../atoms/verifcation';
+import {
+    sessionAtom,
+    useSetCurrentVerificationId,
+    useStartSessionById,
+} from '../atoms/verifcation';
 import { Button } from '../cocaine/button';
 import { popToast, ToastLevel } from '../cocaine/toast';
 import { trpc } from '../utils/trpc';
@@ -62,11 +67,38 @@ const useStartSession = () => {
     };
 };
 
+const ExistingSession = ({
+    sessionId,
+    verificationCount,
+    sessionStartedAt,
+}: {
+    verificationCount: number;
+    sessionId: string;
+    sessionStartedAt: Date;
+}) => {
+    const { startSession, isLoading } = useStartSessionById(sessionId);
+    const startTheSession = () => isLoading && startSession();
+    return (
+        <div className="order-white/7 my-1 mx-auto rounded-md border">
+            <Button onClick={() => startTheSession()}>
+                <>
+                    {verificationCount} verifications started{' '}
+                    {formatDistance(sessionStartedAt, new Date(), {
+                        addSuffix: true,
+                    })}
+                </>
+            </Button>
+        </div>
+    );
+};
+
 export const StartSession = () => {
     const createRandomVerifications = useCreateVerification();
     const startSession = useStartSession();
-
     const [verificationCount, setVerificationCount] = useState(10);
+
+    const { data: currentSessions } = trpc.session.getSessions.useQuery();
+
     return (
         <div className="flex h-full w-full flex-col justify-center">
             <h1 className="mx-auto text-2xl font-bold text-rose-500">
@@ -78,9 +110,18 @@ export const StartSession = () => {
                     Create verifications
                 </Button>
             </div>
+            {currentSessions?.length &&
+                currentSessions.map((session) => (
+                    <ExistingSession
+                        key={session.id}
+                        sessionId={session.id}
+                        sessionStartedAt={session.startedAt}
+                        verificationCount={session._count.Verificaiton}
+                    />
+                ))}
 
             <input
-                value={1}
+                defaultValue={1}
                 className="order-white/7 my-4 mx-auto rounded-md border bg-transparent py-4 text-center"
                 type="number"
                 onChange={(e) => setVerificationCount(() => +e.target.value)}

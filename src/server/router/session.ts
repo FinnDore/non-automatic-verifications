@@ -56,7 +56,7 @@ export const SessionRouter = t.router({
             if (!session) {
                 throw new Error('Session not found');
             }
-            const verifications = findVerifications(
+            const verifications = await findVerifications(
                 input.sessionId,
                 ctx.prisma
             );
@@ -66,4 +66,20 @@ export const SessionRouter = t.router({
                 verifications,
             };
         }),
+    getSessions: authedProcedure.query(async ({ ctx }) => {
+        const sessions = await ctx.prisma.verificaitonSession.findMany({
+            where: { userId: ctx.session.user.id },
+            select: {
+                startedAt: true,
+                id: true,
+                _count: {
+                    select: {
+                        Verificaiton: true,
+                    },
+                },
+            },
+        });
+
+        return sessions;
+    }),
 });
