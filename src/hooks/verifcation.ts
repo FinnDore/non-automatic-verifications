@@ -51,7 +51,7 @@ const useProgerssToNextVerification = () => {
                 body: 'Verification session complete',
                 level: ToastLevel.SUCCESS,
             });
-            router.push('/');
+            router.push('/start-session');
         } else {
             setCurrentVerificationId(nextVerification.id);
         }

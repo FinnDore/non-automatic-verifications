@@ -5,8 +5,10 @@ import { withTRPC } from '@trpc/next';
 import type { Session } from 'next-auth';
 import { SessionProvider, signIn, useSession } from 'next-auth/react';
 import type { AppType } from 'next/app';
+import Link from 'next/link';
 import { Toaster } from 'react-hot-toast';
 import superjson from 'superjson';
+import { Button } from '../cocaine/button';
 import type { AppRouter } from '../server/router';
 import '../styles/globals.css';
 
@@ -15,13 +17,31 @@ const Nav = () => {
 
     return (
         <div className="mb-6 flex w-full">
-            <div className="mr-auto text-2xl font-bold text-rose-600 ">NAV</div>
+            <Link href={'/'}>
+                <div className="my-auto mr-12 cursor-pointer text-2xl font-bold text-rose-600">
+                    NAV
+                </div>
+            </Link>
+
+            <div className="my-auto mr-auto flex">
+                <Link href={'/start-session'}>
+                    <Button className="mr-6 border-none dark:bg-transparent">
+                        Start Session
+                    </Button>
+                </Link>
+                <Link href={'/stats'}>
+                    <Button className="border-none dark:bg-transparent">
+                        Stats
+                    </Button>
+                </Link>
+            </div>
+
             {!data?.user && (
-                <button className="" onClick={() => signIn('keycloak')}>
+                <button className="my-auto" onClick={() => signIn('keycloak')}>
                     Login
                 </button>
             )}
-            {data?.user && <div>{data.user.name}</div>}
+            {data?.user && <div className="my-auto">{data.user.name}</div>}
         </div>
     );
 };

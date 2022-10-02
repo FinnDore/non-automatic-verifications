@@ -15,7 +15,11 @@ const Picture = () => {
 };
 
 const getMeta = (meta: unknown, key: string) => {
-    return typeof meta === 'object' ? (meta as any)?.[key] : 'unknown';
+    return typeof meta === 'object'
+        ? // LOOK AWAY RIGHT NOW
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (meta as any)?.[key]
+        : 'unknown';
 };
 
 const SideBar = () => {

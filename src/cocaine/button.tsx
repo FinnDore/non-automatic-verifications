@@ -9,7 +9,7 @@ export const Button = forwardRef<
     <button
         onClick={props.onClick}
         className={clsx(
-            'cursor-pointer select-none rounded-md px-4 py-2 transition-colors hover:bg-black/[.05] dark:hover:bg-white/[.05]',
+            'border-black/7 cursor-pointer select-none rounded-md border px-4 py-2 transition-colors hover:bg-black/[.05] dark:bg-black hover:dark:border-white dark:hover:bg-white/[.05]',
             props.className
         )}
         ref={forwardedRef}

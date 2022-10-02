@@ -1,5 +1,6 @@
 import { formatDistance } from 'date-fns';
 import { useAtom } from 'jotai';
+import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Button } from '../cocaine/button';
@@ -25,7 +26,7 @@ const useCreateVerification = () => {
         },
         onSuccess() {
             popToast({
-                body: 'Created random verifications',
+                body: `Created ${100} random verifications`,
                 level: ToastLevel.SUCCESS,
             });
         },
@@ -35,7 +36,7 @@ const useCreateVerification = () => {
         if (isCreatingRandomVerifications) return;
 
         createRandomVerificationsMutation({
-            number: 10,
+            number: 100,
         });
     };
 };
@@ -83,7 +84,7 @@ const ExistingSession = ({
     const { startSession, isLoading } = useStartSessionById(sessionId);
     const startTheSession = () => isLoading && startSession();
     return (
-        <div className="order-white/7 relative my-1 mx-auto rounded-md border bg-black transition-transform hover:scale-105">
+        <div className="my-1 mx-auto transition-transform hover:scale-105">
             <Button onClick={() => startTheSession()} className="z-20">
                 <>
                     {verifiedCount} / {verificationCount} verifications started{' '}
@@ -109,13 +110,14 @@ export const StartSession = () => {
                 Start Session
             </h1>
 
-            <div className="order-white/7 my-4 mx-auto rounded-md border">
-                <Button onClick={() => createRandomVerifications()}>
-                    Create verifications
-                </Button>
-            </div>
+            <Button
+                onClick={() => createRandomVerifications()}
+                className="my-4 mx-auto"
+            >
+                Create verifications
+            </Button>
 
-            {currentSessions?.length &&
+            {!!currentSessions?.length &&
                 currentSessions.map((session) => (
                     <ExistingSession
                         key={session.id}
@@ -128,11 +130,11 @@ export const StartSession = () => {
 
             <input
                 defaultValue={1}
-                className="order-white/7 my-4 mx-auto rounded-md border bg-transparent py-4 text-center"
+                className="border-white/7 my-4 mx-auto rounded-md border bg-transparent py-4 text-center dark:bg-black"
                 type="number"
                 onChange={(e) => setVerificationCount(() => +e.target.value)}
             />
-            <div className="border-white/7 mx-auto my-4 rounded-md border">
+            <div className="mx-auto my-4">
                 <Button onClick={() => startSession(verificationCount)}>
                     Start Session
                 </Button>
@@ -140,3 +142,15 @@ export const StartSession = () => {
         </div>
     );
 };
+
+const Home: NextPage = () => {
+    return (
+        <div className="flex h-full w-full flex-col">
+            <div className="h-full w-full">
+                <StartSession />
+            </div>
+        </div>
+    );
+};
+
+export default Home;
