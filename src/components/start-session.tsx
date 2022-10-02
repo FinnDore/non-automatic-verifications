@@ -1,5 +1,6 @@
 import { formatDistance } from 'date-fns';
 import { useAtom } from 'jotai';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Button } from '../cocaine/button';
 import { popToast, ToastLevel } from '../cocaine/toast';
@@ -40,6 +41,7 @@ const useCreateVerification = () => {
 };
 
 const useStartSession = () => {
+    const router = useRouter();
     const [, setSession] = useAtom(sessionAtom);
     const setCurrentVerificationId = useSetCurrentVerificationId();
     const { mutate: startSessionMutation, isLoading: isStartingSession } =
@@ -53,8 +55,8 @@ const useStartSession = () => {
             },
             onSuccess(session) {
                 setSession(() => session);
-
                 setCurrentVerificationId(session.verifications[0]?.id ?? null);
+                router.push('/verify/vrn');
             },
         });
 

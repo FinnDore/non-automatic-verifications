@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
     useCurrentVerification,
     useSubmitVerification,
-} from '../hooks/verifcation';
+} from '../../hooks/verifcation';
 
 const Picture = () => {
     const url = '/img2.gif';
@@ -108,13 +108,20 @@ const SideBar = () => {
     );
 };
 
-export const Verify = () => {
+const Verify = () => {
+    const currentVerification = useCurrentVerification();
     return (
         <div className="flex w-full flex-col items-center">
             <div className="flex flex-col">
-                <Picture />
-                <SideBar />
+                {currentVerification && (
+                    <>
+                        <Picture />
+                        <SideBar />
+                    </>
+                )}
             </div>
         </div>
     );
 };
+
+export default Verify;

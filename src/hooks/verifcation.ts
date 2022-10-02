@@ -1,5 +1,6 @@
 import { Verification, VrnStatus } from '@prisma/client';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import { popToast, ToastLevel } from '../cocaine/toast';
 import { trpc } from '../utils/trpc';
@@ -30,6 +31,7 @@ export const useCurrentVerification = () => {
 };
 
 const useProgerssToNextVerification = () => {
+    const router = useRouter();
     const { session, setSession } = useSession();
     const currentVerification = useCurrentVerification();
     const setCurrentVerificationId = useSetCurrentVerificationId();
@@ -49,15 +51,23 @@ const useProgerssToNextVerification = () => {
                 body: 'Verification session complete',
                 level: ToastLevel.SUCCESS,
             });
+            router.push('/');
         } else {
             setCurrentVerificationId(nextVerification.id);
         }
-    }, [session, currentVerification, setSession, setCurrentVerificationId]);
+    }, [
+        session,
+        currentVerification?.id,
+        setSession,
+        router,
+        setCurrentVerificationId,
+    ]);
 
     return progressToNextVerification;
 };
 
 export const useStartSessionById = (sessionId: string) => {
+    const router = useRouter();
     const [, setSession] = useAtom(sessionAtom);
     const setCurrentVerificationId = useSetCurrentVerificationId();
     const { refetch, isLoading } = trpc.session.getSession.useQuery(
@@ -77,6 +87,7 @@ export const useStartSessionById = (sessionId: string) => {
             onSuccess(session) {
                 setSession(() => session);
                 setCurrentVerificationId(session.verifications[0]?.id ?? null);
+                router.push('/verify/vrn');
             },
         }
     );
