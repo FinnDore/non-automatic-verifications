@@ -7,7 +7,6 @@ import { sessionAtom } from '../hooks/verifcation';
 const currentVerificationId = atom<string | null>(null);
 
 const Home: NextPage = () => {
-    const [verificationId] = useAtom(currentVerificationId);
     const [session] = useAtom(sessionAtom);
 
     return (

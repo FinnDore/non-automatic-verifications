@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
     useCurrentVerification,
     useSubmitVerification,
@@ -19,6 +20,14 @@ const getMeta = (meta: unknown, key: string) => {
 
 const SideBar = () => {
     const currentVerification = useCurrentVerification();
+    const [vrn, setVrn] = useState<string | null>(
+        currentVerification?.vrn ?? null
+    );
+
+    useEffect(
+        () => setVrn(currentVerification?.vrn ?? null),
+        [setVrn, currentVerification?.vrn]
+    );
 
     const { submitVerification } = useSubmitVerification();
     return (
@@ -59,7 +68,8 @@ const SideBar = () => {
             </div>
 
             <input
-                defaultValue={currentVerification?.vrn}
+                value={vrn ?? ''}
+                onChange={(e) => setVrn(e.target.value)}
                 className="border-black/7 dark:border-white/7 my-6 mx-auto rounded-md border bg-transparent py-4 text-center text-3xl dark:bg-black"
                 type="text"
             />
@@ -69,10 +79,11 @@ const SideBar = () => {
                     className="mx-4 h-20 w-32 rounded-md border-2 border-transparent bg-rose-700 px-6 py-2 text-white transition-colors hover:border-rose-800 hover:bg-rose-500"
                     onClick={() => {
                         if (currentVerification) {
-                            submitVerification(
-                                currentVerification.id,
-                                'REJECTED'
-                            );
+                            submitVerification({
+                                verificationId: currentVerification.id,
+                                status: 'REJECTED',
+                                vrn: vrn || currentVerification.vrn,
+                            });
                         }
                     }}
                 >
@@ -82,10 +93,11 @@ const SideBar = () => {
                     className=" h-20 w-32 rounded-md  border-2 border-transparent bg-emerald-500 px-6 py-2 text-white transition-colors hover:border-emerald-700 hover:bg-emerald-400"
                     onClick={() => {
                         if (currentVerification) {
-                            submitVerification(
-                                currentVerification.id,
-                                'ACCEPTED'
-                            );
+                            submitVerification({
+                                verificationId: currentVerification.id,
+                                status: 'ACCEPTED',
+                                vrn: vrn || currentVerification.vrn,
+                            });
                         }
                     }}
                 >

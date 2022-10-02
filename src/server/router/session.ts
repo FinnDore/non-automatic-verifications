@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, VrnStatus } from '@prisma/client';
 import { z } from 'zod';
 import { authedProcedure } from './protected-procedure';
 import { t } from './t';
@@ -10,6 +10,7 @@ const findVerifications = async (
     await prisma.verification.findMany({
         where: {
             verificationSessionId: verificationId,
+            status: VrnStatus.UNVERIFIED,
         },
     });
 
@@ -30,7 +31,7 @@ export const SessionRouter = t.router({
             });
 
             await ctx.prisma
-                .$executeRaw`UPDATE Verification SET verificationSessionId = ${session.id} WHERE verificationSessionId IS NULL LIMIT ${input.limit}`;
+                .$executeRaw`UPDATE Verification SET verificationSessionId = ${session.id} WHERE verificationSessionId IS NULL AND status = ${VrnStatus.UNVERIFIED} LIMIT ${input.limit}`;
 
             const verifications = await findVerifications(
                 session.id,
@@ -56,6 +57,7 @@ export const SessionRouter = t.router({
             if (!session) {
                 throw new Error('Session not found');
             }
+
             const verifications = await findVerifications(
                 input.sessionId,
                 ctx.prisma
@@ -66,12 +68,21 @@ export const SessionRouter = t.router({
                 verifications,
             };
         }),
+
     getSessions: authedProcedure.query(async ({ ctx }) => {
         const sessions = await ctx.prisma.verificationSession.findMany({
-            where: { userId: ctx.session.user.id },
+            where: {
+                userId: ctx.session.user.id,
+                Verification: {
+                    some: {
+                        status: VrnStatus.UNVERIFIED,
+                    },
+                },
+            },
             select: {
                 startedAt: true,
                 id: true,
+                verificationCursor: true,
                 _count: {
                     select: {
                         Verification: true,

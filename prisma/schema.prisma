@@ -65,23 +65,26 @@ model VerificationToken {
 }
 
 model Verification {
-  id                    String              @id @default(cuid())
+  id                    String               @id @default(cuid())
   vrn                   String
   metadata              Json
   verificationSessionId String?
   verificationSession   VerificationSession? @relation(fields: [verificationSessionId], references: [id], onDelete: SetNull)
-  status                VrnStatus           @default(UNVERIFIED)
-  createdAt             DateTime            @default(now())
+  status                VrnStatus            @default(UNVERIFIED)
+  updatedVrn            String?
+
+  createdAt DateTime @default(now())
 }
 
 model VerificationSession {
-  id           String         @id @default(cuid())
-  startedAt    DateTime       @default(now())
-  completedAt  DateTime?
-  lastUpdated  DateTime       @default(now())
-  userId       String
-  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Verification Verification[]
+  id                 String         @id @default(cuid())
+  startedAt          DateTime       @default(now())
+  completedAt        DateTime?
+  lastUpdated        DateTime       @default(now())
+  userId             String
+  verificationCursor Int            @default(0)
+  user               User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Verification       Verification[]
 }
 
 enum VrnStatus {

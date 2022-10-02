@@ -71,10 +71,12 @@ const ExistingSession = ({
     sessionId,
     verificationCount,
     sessionStartedAt,
+    verifiedCount,
 }: {
     verificationCount: number;
     sessionId: string;
     sessionStartedAt: Date;
+    verifiedCount: number;
 }) => {
     const { startSession, isLoading } = useStartSessionById(sessionId);
     const startTheSession = () => isLoading && startSession();
@@ -82,7 +84,7 @@ const ExistingSession = ({
         <div className="order-white/7 relative my-1 mx-auto rounded-md border bg-black transition-transform hover:scale-105">
             <Button onClick={() => startTheSession()} className="z-20">
                 <>
-                    {verificationCount} verifications started{' '}
+                    {verifiedCount} / {verificationCount} verifications started{' '}
                     {formatDistance(sessionStartedAt, new Date(), {
                         addSuffix: true,
                     })}
@@ -95,7 +97,7 @@ const ExistingSession = ({
 export const StartSession = () => {
     const createRandomVerifications = useCreateVerification();
     const startSession = useStartSession();
-    const [verificationCount, setVerificationCount] = useState(10);
+    const [verificationCount, setVerificationCount] = useState(1);
 
     const { data: currentSessions } = trpc.session.getSessions.useQuery();
 
@@ -110,12 +112,14 @@ export const StartSession = () => {
                     Create verifications
                 </Button>
             </div>
+
             {currentSessions?.length &&
                 currentSessions.map((session) => (
                     <ExistingSession
                         key={session.id}
                         sessionId={session.id}
                         sessionStartedAt={session.startedAt}
+                        verifiedCount={session.verificationCursor}
                         verificationCount={session._count.Verification}
                     />
                 ))}
