@@ -79,8 +79,8 @@ const ExistingSession = ({
     const { startSession, isLoading } = useStartSessionById(sessionId);
     const startTheSession = () => isLoading && startSession();
     return (
-        <div className="order-white/7 my-1 mx-auto rounded-md border">
-            <Button onClick={() => startTheSession()}>
+        <div className="order-white/7 relative my-1 mx-auto rounded-md border bg-black transition-transform hover:scale-105">
+            <Button onClick={() => startTheSession()} className="z-20">
                 <>
                     {verificationCount} verifications started{' '}
                     {formatDistance(sessionStartedAt, new Date(), {

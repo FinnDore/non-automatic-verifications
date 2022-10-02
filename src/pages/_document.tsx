@@ -11,7 +11,7 @@ export default function document() {
                 <meta name="theme-color" content="#000" />
                 <meta name="twitter:card" content="summary_large_image"></meta>
             </Head>
-            <body className="bg-[#101010]">
+            <body className="bg-white text-black dark:bg-[#101010] dark:text-white ">
                 <Main />
                 <NextScript />
             </body>

@@ -1,6 +1,7 @@
-import { Verification } from '@prisma/client';
+import { Verification, VrnStatus } from '@prisma/client';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useCallback } from 'react';
+import { z } from 'zod';
 import { popToast, ToastLevel } from '../cocaine/toast';
 import { trpc } from '../utils/trpc';
 
@@ -87,7 +88,7 @@ export const useStartSessionById = (sessionId: string) => {
     };
 };
 
-// const VerificationStatus = z.nativeEnum(VrnStatus);
+const VerificationStatus = z.nativeEnum(VrnStatus);
 export const useSubmitVerification = () => {
     const progressToNextVerification = useProgerssToNextVerification();
     const session = useSession();
@@ -111,11 +112,11 @@ export const useSubmitVerification = () => {
         });
 
     const submitVerification = useCallback(
-        (verificationId: string, status: string) =>
+        (verificationId: string, status: VrnStatus) =>
             submitVerificationMutation({
                 verificationId,
                 sessionId: session.session?.sessionId ?? '',
-                status: status as any,
+                status,
             }),
         [session.session?.sessionId, submitVerificationMutation]
     );
