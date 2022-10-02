@@ -53,7 +53,7 @@ model User {
   image               String?
   accounts            Account[]
   sessions            Session[]
-  verificaitonSession VerificaitonSession[]
+  verificationSession VerificationSession[]
 }
 
 model VerificationToken {
@@ -64,27 +64,32 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Verificaiton {
-  id                    String              @id @default(cuid())
+model Verification {
+  id                    String               @id @default(cuid())
   vrn                   String
   metadata              Json
-  verificaitonSessionId String?
-  verificaitonSession   VerificaitonSession? @relation(fields: [verificaitonSessionId], references: [id], onDelete: SetNull)
-  status                VrnStatus           @default(UNVERIFIED)
-  createdAt             DateTime            @default(now())
+  verificationSessionId String?
+  verificationSession   VerificationSession? @relation(fields: [verificationSessionId], references: [id], onDelete: SetNull)
+  status                VrnStatus            @default(UNVERIFIED)
+  updatedVrn            String?
+
+  createdAt DateTime @default(now())
 }
 
-model VerificaitonSession {
-  id           String         @id @default(cuid())
-  startedAt    DateTime       @default(now())
-  completedAt  DateTime?
-  lastUpdated  DateTime       @default(now())
-  userId       String
-  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Verificaiton Verificaiton[]
+model VerificationSession {
+  id                 String         @id @default(cuid())
+  startedAt          DateTime       @default(now())
+  completedAt        DateTime?
+  lastUpdated        DateTime       @default(now())
+  userId             String
+  verificationCursor Int            @default(0)
+  user               User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Verification       Verification[]
 }
 
 enum VrnStatus {
   UNVERIFIED
-  VERIFIED
+  REJECTED
+  ACCEPTED
+  CORRECTED
 }

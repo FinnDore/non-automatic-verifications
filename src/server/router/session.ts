@@ -1,15 +1,16 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, VrnStatus } from '@prisma/client';
 import { z } from 'zod';
 import { authedProcedure } from './protected-procedure';
 import { t } from './t';
 
 const findVerifications = async (
-    verificaitonId: string,
+    verificationId: string,
     prisma: PrismaClient
 ) =>
-    await prisma.verificaiton.findMany({
+    await prisma.verification.findMany({
         where: {
-            verificaitonSessionId: verificaitonId,
+            verificationSessionId: verificationId,
+            status: VrnStatus.UNVERIFIED,
         },
     });
 
@@ -23,14 +24,14 @@ export const SessionRouter = t.router({
         .mutation(async ({ ctx, input }) => {
             const userId = ctx.session.user.id;
 
-            const session = await ctx.prisma.verificaitonSession.create({
+            const session = await ctx.prisma.verificationSession.create({
                 data: {
                     userId: userId,
                 },
             });
 
             await ctx.prisma
-                .$executeRaw`UPDATE Verificaiton SET verificaitonSessionId = ${session.id} WHERE verificaitonSessionId IS NULL LIMIT ${input.limit}`;
+                .$executeRaw`UPDATE Verification SET verificationSessionId = ${session.id} WHERE verificationSessionId IS NULL AND status = ${VrnStatus.UNVERIFIED} LIMIT ${input.limit}`;
 
             const verifications = await findVerifications(
                 session.id,
@@ -49,13 +50,14 @@ export const SessionRouter = t.router({
             })
         )
         .query(async ({ ctx, input }) => {
-            const session = await ctx.prisma.verificaitonSession.findFirst({
+            const session = await ctx.prisma.verificationSession.findFirst({
                 where: { id: input.sessionId, userId: ctx.session.user.id },
             });
 
             if (!session) {
                 throw new Error('Session not found');
             }
+
             const verifications = await findVerifications(
                 input.sessionId,
                 ctx.prisma
@@ -66,15 +68,24 @@ export const SessionRouter = t.router({
                 verifications,
             };
         }),
+
     getSessions: authedProcedure.query(async ({ ctx }) => {
-        const sessions = await ctx.prisma.verificaitonSession.findMany({
-            where: { userId: ctx.session.user.id },
+        const sessions = await ctx.prisma.verificationSession.findMany({
+            where: {
+                userId: ctx.session.user.id,
+                Verification: {
+                    some: {
+                        status: VrnStatus.UNVERIFIED,
+                    },
+                },
+            },
             select: {
                 startedAt: true,
                 id: true,
+                verificationCursor: true,
                 _count: {
                     select: {
-                        Verificaiton: true,
+                        Verification: true,
                     },
                 },
             },

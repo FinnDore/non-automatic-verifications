@@ -1,13 +1,14 @@
 import { formatDistance } from 'date-fns';
 import { useAtom } from 'jotai';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { Button } from '../cocaine/button';
+import { popToast, ToastLevel } from '../cocaine/toast';
 import {
     sessionAtom,
     useSetCurrentVerificationId,
     useStartSessionById,
-} from '../atoms/verifcation';
-import { Button } from '../cocaine/button';
-import { popToast, ToastLevel } from '../cocaine/toast';
+} from '../hooks/verifcation';
 import { trpc } from '../utils/trpc';
 
 const useCreateVerification = () => {
@@ -40,6 +41,7 @@ const useCreateVerification = () => {
 };
 
 const useStartSession = () => {
+    const router = useRouter();
     const [, setSession] = useAtom(sessionAtom);
     const setCurrentVerificationId = useSetCurrentVerificationId();
     const { mutate: startSessionMutation, isLoading: isStartingSession } =
@@ -53,8 +55,8 @@ const useStartSession = () => {
             },
             onSuccess(session) {
                 setSession(() => session);
-
                 setCurrentVerificationId(session.verifications[0]?.id ?? null);
+                router.push('/verify/vrn');
             },
         });
 
@@ -71,18 +73,20 @@ const ExistingSession = ({
     sessionId,
     verificationCount,
     sessionStartedAt,
+    verifiedCount,
 }: {
     verificationCount: number;
     sessionId: string;
     sessionStartedAt: Date;
+    verifiedCount: number;
 }) => {
     const { startSession, isLoading } = useStartSessionById(sessionId);
     const startTheSession = () => isLoading && startSession();
     return (
-        <div className="order-white/7 my-1 mx-auto rounded-md border">
-            <Button onClick={() => startTheSession()}>
+        <div className="order-white/7 relative my-1 mx-auto rounded-md border bg-black transition-transform hover:scale-105">
+            <Button onClick={() => startTheSession()} className="z-20">
                 <>
-                    {verificationCount} verifications started{' '}
+                    {verifiedCount} / {verificationCount} verifications started{' '}
                     {formatDistance(sessionStartedAt, new Date(), {
                         addSuffix: true,
                     })}
@@ -95,7 +99,7 @@ const ExistingSession = ({
 export const StartSession = () => {
     const createRandomVerifications = useCreateVerification();
     const startSession = useStartSession();
-    const [verificationCount, setVerificationCount] = useState(10);
+    const [verificationCount, setVerificationCount] = useState(1);
 
     const { data: currentSessions } = trpc.session.getSessions.useQuery();
 
@@ -110,13 +114,15 @@ export const StartSession = () => {
                     Create verifications
                 </Button>
             </div>
+
             {currentSessions?.length &&
                 currentSessions.map((session) => (
                     <ExistingSession
                         key={session.id}
                         sessionId={session.id}
                         sessionStartedAt={session.startedAt}
-                        verificationCount={session._count.Verificaiton}
+                        verifiedCount={session.verificationCursor}
+                        verificationCount={session._count.Verification}
                     />
                 ))}
 
