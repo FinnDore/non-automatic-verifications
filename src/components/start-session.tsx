@@ -1,13 +1,13 @@
 import { formatDistance } from 'date-fns';
 import { useAtom } from 'jotai';
 import { useState } from 'react';
+import { Button } from '../cocaine/button';
+import { popToast, ToastLevel } from '../cocaine/toast';
 import {
     sessionAtom,
     useSetCurrentVerificationId,
     useStartSessionById,
-} from '../atoms/verifcation';
-import { Button } from '../cocaine/button';
-import { popToast, ToastLevel } from '../cocaine/toast';
+} from '../hooks/verifcation';
 import { trpc } from '../utils/trpc';
 
 const useCreateVerification = () => {
@@ -116,7 +116,7 @@ export const StartSession = () => {
                         key={session.id}
                         sessionId={session.id}
                         sessionStartedAt={session.startedAt}
-                        verificationCount={session._count.Verificaiton}
+                        verificationCount={session._count.Verification}
                     />
                 ))}
 

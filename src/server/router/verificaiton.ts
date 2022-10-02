@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Prisma, VrnStatus } from '@prisma/client';
 import { random } from 'lodash-es';
 import { z } from 'zod';
 import { authedProcedure } from './protected-procedure';
@@ -33,6 +33,8 @@ const getVrn = () =>
         .map(() => getRandom(alphabet))
         .join('');
 
+export const VerificationStatus = z.nativeEnum(VrnStatus);
+
 export const VerificationRouter = t.router({
     createRandomVerifications: authedProcedure
         .input(
@@ -41,7 +43,7 @@ export const VerificationRouter = t.router({
             })
         )
         .mutation(async ({ ctx, input }) => {
-            await ctx.prisma.verificaiton.createMany({
+            await ctx.prisma.verification.createMany({
                 data: Array.from({ length: input.number }).map(() => ({
                     vrn: getVrn(),
                     metadata: {
@@ -51,5 +53,52 @@ export const VerificationRouter = t.router({
                     } as Prisma.InputJsonObject,
                 })),
             });
+        }),
+    submitVerification: authedProcedure
+        .input(
+            z.object({
+                verificationId: z.string(),
+                status: VerificationStatus,
+                sessionId: z.string(),
+            })
+        )
+        .mutation(async ({ ctx, input }) => {
+            const verification = await ctx.prisma.user.update({
+                select: {
+                    verificationSession: {
+                        select: {
+                            userId: true,
+                        },
+                    },
+                },
+                where: {
+                    id: ctx.session.user.id,
+                },
+                data: {
+                    verificationSession: {
+                        update: {
+                            where: {
+                                id: input.sessionId,
+                            },
+                            data: {
+                                Verification: {
+                                    updateMany: {
+                                        where: {
+                                            id: input.verificationId,
+                                        },
+                                        data: {
+                                            status: input.status,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            });
+
+            if (!verification.verificationSession.length) {
+                throw new Error('Verification not found');
+            }
         }),
 });

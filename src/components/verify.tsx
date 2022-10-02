@@ -1,4 +1,8 @@
-import { useCurrentVerification, useSession } from '../atoms/verifcation';
+import {
+    useCurrentVerification,
+    useSession,
+    useSubmitVerification,
+} from '../hooks/verifcation';
 
 const Picture = () => {
     const url = '/img1.png';
@@ -14,7 +18,7 @@ const SideBar = () => {
     const currentVerification = useCurrentVerification();
     const { session } = useSession();
     console.log(currentVerification);
-
+    const { submitVerification, isLoading } = useSubmitVerification();
     return (
         <div className="mr-auto flex w-full flex-col lg:ml-6 lg:w-[30vw] ">
             <h1 className="text-2xl">Metadata</h1>
@@ -39,18 +43,39 @@ const SideBar = () => {
                 </tbody>
             </table>
             <p className="mx-auto text-2xl font-bold">ABCI102</p>
+
+            {currentVerification?.vrn}
             <div className="my-6 flex w-full justify-center">
-                <button className="mx-4 aspect-square h-20 rounded-md bg-rose-700 px-4 py-2 text-white">
+                <button
+                    className="mx-4 aspect-square h-20 rounded-md bg-rose-700 px-4 py-2 text-white"
+                    onClick={() => {
+                        if (currentVerification) {
+                            submitVerification(
+                                currentVerification.id,
+                                'REJECTED'
+                            );
+                        }
+                    }}
+                >
                     Reject
                 </button>
-                <button className="aspect-square h-20 rounded-md bg-emerald-400 px-4 py-2 text-white">
+                <button
+                    className="aspect-square h-20 rounded-md bg-emerald-400 px-4 py-2 text-white"
+                    onClick={() => {
+                        if (currentVerification) {
+                            submitVerification(
+                                currentVerification.id,
+                                'ACCEPTED'
+                            );
+                        }
+                    }}
+                >
                     Accept
                 </button>
             </div>
             {/* {currentVerification && (
                 <pre>{JSON.stringify(currentVerification, null, 2)}</pre>
             )} */}
-            {session?.verifications?.length} in the current session
         </div>
     );
 };

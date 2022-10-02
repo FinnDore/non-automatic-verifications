@@ -4,12 +4,12 @@ import { authedProcedure } from './protected-procedure';
 import { t } from './t';
 
 const findVerifications = async (
-    verificaitonId: string,
+    verificationId: string,
     prisma: PrismaClient
 ) =>
-    await prisma.verificaiton.findMany({
+    await prisma.verification.findMany({
         where: {
-            verificaitonSessionId: verificaitonId,
+            verificationSessionId: verificationId,
         },
     });
 
@@ -23,14 +23,14 @@ export const SessionRouter = t.router({
         .mutation(async ({ ctx, input }) => {
             const userId = ctx.session.user.id;
 
-            const session = await ctx.prisma.verificaitonSession.create({
+            const session = await ctx.prisma.verificationSession.create({
                 data: {
                     userId: userId,
                 },
             });
 
             await ctx.prisma
-                .$executeRaw`UPDATE Verificaiton SET verificaitonSessionId = ${session.id} WHERE verificaitonSessionId IS NULL LIMIT ${input.limit}`;
+                .$executeRaw`UPDATE Verification SET verificationSessionId = ${session.id} WHERE verificationSessionId IS NULL LIMIT ${input.limit}`;
 
             const verifications = await findVerifications(
                 session.id,
@@ -49,7 +49,7 @@ export const SessionRouter = t.router({
             })
         )
         .query(async ({ ctx, input }) => {
-            const session = await ctx.prisma.verificaitonSession.findFirst({
+            const session = await ctx.prisma.verificationSession.findFirst({
                 where: { id: input.sessionId, userId: ctx.session.user.id },
             });
 
@@ -67,14 +67,14 @@ export const SessionRouter = t.router({
             };
         }),
     getSessions: authedProcedure.query(async ({ ctx }) => {
-        const sessions = await ctx.prisma.verificaitonSession.findMany({
+        const sessions = await ctx.prisma.verificationSession.findMany({
             where: { userId: ctx.session.user.id },
             select: {
                 startedAt: true,
                 id: true,
                 _count: {
                     select: {
-                        Verificaiton: true,
+                        Verification: true,
                     },
                 },
             },
