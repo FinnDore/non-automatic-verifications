@@ -35,16 +35,12 @@ const Stat = ({
     color: string;
 }) => (
     <div
-        className={clsx(
-            'rounded-none py-6 px-12 ',
-            {
-                'border-r border-white/20': !end,
-            },
-            color
-        )}
+        className={clsx('rounded-none py-6 px-12 ', {
+            'border-r border-black/20 dark:border-white/20': !end,
+        })}
     >
-        <h1 className="text-sm font-bold">{title}</h1>
-        <h1 className="mt-2 flex text-5xl text-white">
+        <h1 className={clsx('text-sm font-bold', color)}>{title}</h1>
+        <h1 className="mt-2 flex text-5xl">
             {num.split('').map((x, i) => (
                 <Ticker key={i} letter={x as typeof numbers[number]} />
             ))}
@@ -86,21 +82,21 @@ const Home = () => {
                 <CustomSelect placeholder={'All'} />
                 <CustomSelect placeholder={'7 Days'} />
             </div>
-            <Box className="my-6 flex w-max border-white/40">
+            <Box className="my-6 flex w-max">
                 <Stat
                     color="text-orange-500"
-                    num={`${pendingVerifications ?? '0000'}`}
+                    num={`${pendingVerifications ?? '0'}`}
                     title="Pending"
                 />
                 <Stat
                     color="text-emerald-500"
-                    num={`${verifiedVerifications ?? '000'}`}
+                    num={`${verifiedVerifications ?? '0'}`}
                     title="Complete"
                 />
                 <Stat
                     color="text-rose-500"
                     end={true}
-                    num={`${rejectedVerifications ?? '0000'}`}
+                    num={`${rejectedVerifications ?? '0'}`}
                     title="Rejected"
                 />
             </Box>
