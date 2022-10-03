@@ -6,6 +6,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@radix-ui/react-select';
+import clsx from 'clsx';
 import { Box } from '../cocaine/box';
 import { numbers, Ticker } from '../cocaine/ticker';
 import { trpc } from '../utils/trpc';
@@ -22,10 +23,28 @@ const CustomSelect = ({ placeholder }: { placeholder: string }) => (
     </Select>
 );
 
-const Stat = ({ num, title }: { num: string; title: string }) => (
-    <div className="rounded-none py-6 pl-6 pr-24">
-        <h1 className="text-sm">{title}</h1>
-        <h1 className="mt-2 flex text-5xl">
+const Stat = ({
+    num,
+    title,
+    end,
+    color,
+}: {
+    num: string;
+    title: string;
+    end?: boolean;
+    color: string;
+}) => (
+    <div
+        className={clsx(
+            'rounded-none py-6 px-12 ',
+            {
+                'border-r border-white/20': !end,
+            },
+            color
+        )}
+    >
+        <h1 className="text-sm font-bold">{title}</h1>
+        <h1 className="mt-2 flex text-5xl text-white">
             {num.split('').map((x, i) => (
                 <Ticker key={i} letter={x as typeof numbers[number]} />
             ))}
@@ -67,26 +86,40 @@ const Home = () => {
                 <CustomSelect placeholder={'All'} />
                 <CustomSelect placeholder={'7 Days'} />
             </div>
-            <Box className="my-6 flex w-full border-white/40">
+            <Box className="my-6 flex w-max border-white/40">
                 <Stat
-                    num={`${pendingVerifications ?? 0}`}
-                    title="Pending Verifications"
+                    color="text-orange-500"
+                    num={`${pendingVerifications ?? '0000'}`}
+                    title="Pending"
                 />
                 <Stat
-                    num={`${verifiedVerifications ?? 0}`}
-                    title="Complete Verifications"
+                    color="text-emerald-500"
+                    num={`${verifiedVerifications ?? '000'}`}
+                    title="Complete"
                 />
                 <Stat
-                    num={`${rejectedVerifications ?? 0}`}
-                    title="Rejected Verifications"
+                    color="text-rose-500"
+                    end={true}
+                    num={`${rejectedVerifications ?? '0000'}`}
+                    title="Rejected"
                 />
             </Box>
 
-            <Box className=" my-6 ml-auto flex flex-row-reverse  ">
-                <Stat num="1,000" title="Verifications /month" />
-                <Stat num="2,000" title="Verifications /day" />
-                <Stat num="63" title="Corrections" />
-            </Box>
+            {/* <div className="flex flex-col lg:flex-row">
+                <Box className="my-6 mr-12 h-96 w-full"></Box>
+                <div className="my-6 flex w-full flex-col lg:ml-auto lg:w-max">
+                    <Box className="mb-6 flex flex-1 flex-row-reverse ">
+                        <Stat num="1,000" title="Verifications /month" />
+                        <Stat num="2,000" title="Verifications /day" />
+                        <Stat num="63" title="Corrections" />
+                    </Box>
+                    <Box className="mt-6 flex flex-1 flex-row-reverse ">
+                        <Stat num="1,000" title="Verifications /month" />
+                        <Stat num="2,000" title="Verifications /day" />
+                        <Stat num="63" title="Corrections" />
+                    </Box>
+                </div>
+            </div> */}
         </div>
     );
 };
