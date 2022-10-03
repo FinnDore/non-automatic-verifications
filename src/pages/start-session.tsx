@@ -105,7 +105,7 @@ export const StartSession = () => {
     const { data: currentSessions } = trpc.session.getSessions.useQuery();
 
     return (
-        <div className="flex h-full w-full flex-col justify-center">
+        <div className="flex h-full w-full flex-col justify-center ">
             <h1 className="mx-auto text-2xl font-bold text-rose-500">
                 Start Session
             </h1>

@@ -16,7 +16,7 @@ const Nav = () => {
     const { data } = useSession();
 
     return (
-        <div className="mb-6 flex w-full">
+        <div className="z-50 mb-6 flex w-full">
             <Link href={'/'}>
                 <div className="my-auto mr-12 cursor-pointer text-2xl font-bold text-rose-600">
                     NAV
@@ -29,7 +29,7 @@ const Nav = () => {
                         Start Session
                     </Button>
                 </Link>
-                <Link href={'/stats'}>
+                <Link href={'/'}>
                     <Button className="border-none dark:bg-transparent">
                         Stats
                     </Button>
@@ -54,10 +54,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <>
             <Toaster position="bottom-center" />
             <SessionProvider session={session}>
-                <div className="relative z-[1] flex h-screen w-screen flex-col overflow-visible  px-8 py-6 pb-12 md:px-16">
-                    <div className="noise absolute min-h-screen"></div>
-                    <Nav />
-                    <Component {...pageProps} />
+                <div className="relative h-screen w-screen">
+                    <div className="noise absolute min-h-screen backdrop-invert dark:backdrop-filter-none"></div>
+                    <div className="absolute z-50 flex h-full w-full flex-col overflow-visible px-8 py-6 pb-12 md:px-16 ">
+                        <Nav />
+                        <Component {...pageProps} />
+                    </div>
                 </div>
             </SessionProvider>
         </>
