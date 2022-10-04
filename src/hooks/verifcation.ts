@@ -1,4 +1,4 @@
-import { Verification, VrnStatus } from '@prisma/client';
+import { Verification } from '@prisma/client';
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
@@ -121,7 +121,7 @@ export const useSubmitVerification = () => {
         });
 
     const submitVerification = useCallback(
-        (opts: { verificationId: string; status: VrnStatus; vrn: string }) =>
+        (opts: { verificationId: string; status: any; vrn: string }) =>
             session.session?.sessionId &&
             submitVerificationMutation({
                 sessionId: session.session?.sessionId,

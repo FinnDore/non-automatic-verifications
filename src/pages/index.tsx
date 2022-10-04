@@ -9,6 +9,7 @@ import {
 import clsx from 'clsx';
 import { Box } from '../cocaine/box';
 import { numbers, Ticker } from '../cocaine/ticker';
+import { TimeBar } from '../components/time-bar';
 import { trpc } from '../utils/trpc';
 
 const CustomSelect = ({ placeholder }: { placeholder: string }) => (
@@ -35,7 +36,7 @@ const Stat = ({
     color: string;
 }) => (
     <div
-        className={clsx('rounded-none py-6 px-12 ', {
+        className={clsx('rounded-none py-6 px-12', {
             'border-r border-black/20 dark:border-white/20': !end,
         })}
     >
@@ -75,14 +76,14 @@ const Home = () => {
     } = useStats();
     return (
         <div className="flex h-full w-full flex-col">
-            <div className=" flex">
-                <h1 className="mr-4 flex flex-col bg-gradient-to-r from-red-600 to-rose-500 bg-clip-text text-4xl font-bold text-transparent">
+            <div className="flex w-full">
+                <h1 className=" mr-auto flex flex-col bg-gradient-to-r from-red-600 to-rose-500 bg-clip-text text-4xl font-bold text-transparent">
                     STATS
                 </h1>
                 <CustomSelect placeholder={'All'} />
                 <CustomSelect placeholder={'7 Days'} />
             </div>
-            <Box className="my-6 flex w-max">
+            <Box className="my-6  flex justify-start">
                 <Stat
                     color="text-orange-500"
                     num={`${pendingVerifications ?? '0'}`}
@@ -101,6 +102,7 @@ const Home = () => {
                 />
             </Box>
 
+            <TimeBar />
             {/* <div className="flex flex-col lg:flex-row">
                 <Box className="my-6 mr-12 h-96 w-full"></Box>
                 <div className="my-6 flex w-full flex-col lg:ml-auto lg:w-max">
