@@ -87,9 +87,24 @@ model VerificationSession {
   Verification       Verification[]
 }
 
+model AuditEvent {
+  timestamp DateTime
+  action    AuditAction
+  count     Int         @default(1)
+
+  @@unique([timestamp, action])
+}
+
 enum VrnStatus {
   UNVERIFIED
   REJECTED
   ACCEPTED
   CORRECTED
+}
+
+enum AuditAction {
+  VERIFICATION_ACCEPTED
+  VERIFICATION_REJECTED
+  VERIFICATION_CORRECTED
+  VERIFICATION_CREATED
 }

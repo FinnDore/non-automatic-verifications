@@ -1,7 +1,8 @@
-import { Prisma, VrnStatus } from '@prisma/client';
+import { AuditAction, Prisma, VrnStatus } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { random } from 'lodash-es';
 import { z } from 'zod';
+import { auditEvent } from '../../utils/audit-event';
 import { authedProcedure } from './protected-procedure';
 import { t } from './t';
 
@@ -32,7 +33,17 @@ const getVrn = () =>
         .map(() => getRandom(alphabet))
         .join('');
 
-export const VerificationStatus = z.nativeEnum(VrnStatus);
+const StatusToActionMap = {
+    [VrnStatus.ACCEPTED]: AuditAction.VERIFICATION_ACCEPTED,
+    [VrnStatus.REJECTED]: AuditAction.VERIFICATION_REJECTED,
+    [VrnStatus.CORRECTED]: AuditAction.VERIFICATION_CORRECTED,
+};
+
+export const VerificationStatus = z.nativeEnum({
+    [VrnStatus.ACCEPTED]: VrnStatus.ACCEPTED,
+    [VrnStatus.REJECTED]: VrnStatus.REJECTED,
+    [VrnStatus.CORRECTED]: VrnStatus.CORRECTED,
+});
 
 export const VerificationRouter = t.router({
     createRandomVerifications: authedProcedure
@@ -52,6 +63,7 @@ export const VerificationRouter = t.router({
                     } as Prisma.InputJsonObject,
                 })),
             });
+            auditEvent(AuditAction.VERIFICATION_CREATED, ctx.prisma);
         }),
     submitVerification: authedProcedure
         .input(
@@ -115,6 +127,9 @@ export const VerificationRouter = t.router({
                     message: 'Verification not found',
                     code: 'BAD_REQUEST',
                 });
+            } else {
+                // audit event
+                auditEvent(StatusToActionMap[input.status], ctx.prisma);
             }
         }),
 });

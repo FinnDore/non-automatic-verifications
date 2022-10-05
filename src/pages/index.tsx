@@ -1,4 +1,4 @@
-import { VrnStatus } from '@prisma/client';
+import { AuditAction, VrnStatus } from '@prisma/client';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import {
     Select,
@@ -9,6 +9,7 @@ import {
 import clsx from 'clsx';
 import { Box } from '../cocaine/box';
 import { numbers, Ticker } from '../cocaine/ticker';
+import { TimeBar } from '../components/time-bar';
 import { trpc } from '../utils/trpc';
 
 const CustomSelect = ({ placeholder }: { placeholder: string }) => (
@@ -34,11 +35,7 @@ const Stat = ({
     end?: boolean;
     color: string;
 }) => (
-    <div
-        className={clsx('rounded-none py-6 px-12 ', {
-            'border-r border-black/20 dark:border-white/20': !end,
-        })}
-    >
+    <div className={clsx('rounded-none py-6 px-12')}>
         <h1 className={clsx('text-sm font-bold', color)}>{title}</h1>
         <h1 className="mt-2 flex text-5xl">
             {num.split('').map((x, i) => (
@@ -75,14 +72,14 @@ const Home = () => {
     } = useStats();
     return (
         <div className="flex h-full w-full flex-col">
-            <div className=" flex">
-                <h1 className="mr-4 flex flex-col bg-gradient-to-r from-red-600 to-rose-500 bg-clip-text text-4xl font-bold text-transparent">
+            <div className="flex w-full">
+                <h1 className=" mr-auto flex flex-col bg-gradient-to-r from-red-600 to-rose-500 bg-clip-text text-4xl font-bold text-transparent">
                     STATS
                 </h1>
                 <CustomSelect placeholder={'All'} />
                 <CustomSelect placeholder={'7 Days'} />
             </div>
-            <Box className="my-6 flex w-max">
+            <Box className="my-6  flex justify-start">
                 <Stat
                     color="text-orange-500"
                     num={`${pendingVerifications ?? '0'}`}
@@ -101,6 +98,32 @@ const Home = () => {
                 />
             </Box>
 
+            <Box className="overflow-x-hidden py-4">
+                <h1 className="text-sm text-rose-600">Rejected</h1>
+
+                <div className="-mb-4 mt-2 flex justify-between text-xs opacity-50">
+                    <h1>now</h1>
+                    <h1>7 days ago</h1>
+                </div>
+                <div className="w-full pb-2">
+                    <TimeBar
+                        color="rgba(225, 29, 72, 1)"
+                        action={AuditAction.VERIFICATION_REJECTED}
+                    />
+                </div>
+                <div className=" w-full">
+                    <TimeBar
+                        action={AuditAction.VERIFICATION_ACCEPTED}
+                        upsideDown={true}
+                        color={'rgba(16, 185, 129, 1)'}
+                    />
+                </div>
+                <div className="-mt-4 mb-2 flex justify-between text-xs opacity-50">
+                    <h1>now</h1>
+                    <h1>7 days ago</h1>
+                </div>
+                <h1 className="text-sm text-emerald-600">Complete</h1>
+            </Box>
             {/* <div className="flex flex-col lg:flex-row">
                 <Box className="my-6 mr-12 h-96 w-full"></Box>
                 <div className="my-6 flex w-full flex-col lg:ml-auto lg:w-max">

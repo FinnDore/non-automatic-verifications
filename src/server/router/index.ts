@@ -1,7 +1,7 @@
 // src/server/router/index.ts
 
 import { SessionRouter } from './session';
-import { statsRouter } from './stat';
+import { statsRouter } from './stats';
 import { t } from './t';
 import { VerificationRouter } from './verificaiton';
 
