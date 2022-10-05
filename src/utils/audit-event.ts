@@ -1,6 +1,7 @@
 import { AuditAction, PrismaClient } from '@prisma/client';
-const roundToNearestMinute = (date = new Date()) => {
-    const minutes = 1;
+
+export const roundUpToNearestMinute = (date = new Date()) => {
+    const minutes = 5;
     const ms = 1000 * 60 * minutes;
 
     // 👇️ replace Math.round with Math.ceil to always round UP
@@ -8,7 +9,7 @@ const roundToNearestMinute = (date = new Date()) => {
 };
 
 export const auditEvent = (action: AuditAction, prisma: PrismaClient) => {
-    const timestamp = roundToNearestMinute();
+    const timestamp = roundUpToNearestMinute();
 
     prisma.auditEvent
         .upsert({
